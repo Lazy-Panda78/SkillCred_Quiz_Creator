@@ -1,0 +1,5 @@
+{
+  "name": "Advanced AI Quiz Creator",
+  "description": "A comprehensive, single-page web application that allows educators to generate, edit, and export quizzes from various file formats or pasted text. The app supports file uploads, provides full editing control over generated questions, and offers export options to PDF and DOCX formats.",
+  "requestFramePermissions": []
+}
