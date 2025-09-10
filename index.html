@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +11,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <!-- File reading libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -22,9 +25,108 @@
   }
 }
 </script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #0c0a1a;
+        color: #e0e0ff;
+        overflow-x: hidden;
+    }
+
+    .aurora-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+    }
+
+    .aurora-shape {
+        position: absolute;
+        border-radius: 100%;
+        filter: blur(100px);
+        opacity: 0.4;
+    }
+
+    .aurora-shape1 {
+        width: 600px;
+        height: 600px;
+        background-color: #7f00ff;
+        top: -150px;
+        left: -150px;
+        animation: move1 20s infinite alternate ease-in-out;
+    }
+
+    .aurora-shape2 {
+        width: 500px;
+        height: 500px;
+        background-color: #ff007f;
+        top: 100px;
+        right: -100px;
+        animation: move2 25s infinite alternate ease-in-out;
+    }
+    
+    .aurora-shape3 {
+        width: 400px;
+        height: 400px;
+        background-color: #007fff;
+        bottom: -100px;
+        left: 20%;
+        animation: move3 22s infinite alternate ease-in-out;
+    }
+
+    @keyframes move1 {
+        from { transform: translate(0, 0) rotate(0deg); }
+        to { transform: translate(200px, 100px) rotate(30deg); }
+    }
+
+    @keyframes move2 {
+        from { transform: translate(0, 0) rotate(0deg); }
+        to { transform: translate(-150px, -100px) rotate(-45deg); }
+    }
+    
+    @keyframes move3 {
+        from { transform: translate(0, 0) rotate(0deg); }
+        to { transform: translate(100px, -150px) rotate(60deg); }
+    }
+
+    .glass-pane {
+        background: rgba(22, 19, 45, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1.25rem; /* 20px */
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    /* Custom scrollbar for better aesthetics */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: rgba(22, 19, 45, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(127, 0, 255, 0.5);
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(127, 0, 255, 0.8);
+    }
+
+</style>
 </head>
-<body class="bg-gray-50">
-<div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+<body>
+    <div class="aurora-background">
+        <div class="aurora-shape aurora-shape1"></div>
+        <div class="aurora-shape aurora-shape2"></div>
+        <div class="aurora-shape aurora-shape3"></div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>

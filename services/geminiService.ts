@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { generateUUID } from '../utils/uuid';
 import type { QuizData } from '../types';
@@ -66,15 +65,20 @@ const quizSchema = {
 };
 
 
-export const generateQuizFromText = async (text: string): Promise<QuizData> => {
+export const generateQuizFromText = async (
+    text: string,
+    numMultipleChoice: number,
+    numTrueFalse: number,
+    quizFocus: string
+): Promise<QuizData> => {
     try {
-        const prompt = `You are an AI assistant for educators. Based on the provided text, generate exactly 5 multiple-choice and 5 true/false questions. Ensure your response adheres strictly to the provided JSON schema.
+        let prompt = `You are an AI assistant for educators. Based on the provided text, generate exactly ${numMultipleChoice} multiple-choice and ${numTrueFalse} true/false questions. Ensure your response adheres strictly to the provided JSON schema.`;
 
-        Text content:
-        ---
-        ${text}
-        ---
-        `;
+        if (quizFocus.trim()) {
+            prompt += `\n\nPay special attention to the following topic, chapter, or concept when creating the questions: "${quizFocus.trim()}".`;
+        }
+        
+        prompt += `\n\nText content:\n---\n${text}\n---`;
 
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",

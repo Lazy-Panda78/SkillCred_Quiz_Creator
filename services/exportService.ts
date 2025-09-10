@@ -1,4 +1,3 @@
-
 import type { QuizData } from '../types';
 
 // These are loaded from CDNs, so we declare them to satisfy TypeScript
@@ -20,9 +19,12 @@ export const exportToPdf = (quizData: QuizData) => {
     quizElement.style.display = 'block';
     quizElement.style.position = 'absolute';
     quizElement.style.left = '-9999px';
+    // Ensure the background for the capture is white
+    quizElement.style.backgroundColor = 'white';
+    quizElement.style.color = 'black';
 
 
-    html2canvas(quizElement, { scale: 2 }).then(canvas => {
+    html2canvas(quizElement, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -49,9 +51,11 @@ export const exportToPdf = (quizData: QuizData) => {
         pdf.save('quiz.pdf');
         
         // Hide element after capture
-        quizElement.style.display = 'hidden';
+        quizElement.style.display = 'none';
         quizElement.style.position = 'static';
         quizElement.style.left = 'auto';
+        quizElement.style.backgroundColor = '';
+        quizElement.style.color = '';
     });
 };
 

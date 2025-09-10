@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { InputSection } from './components/InputSection';
@@ -6,6 +5,8 @@ import { QuizOutput } from './components/QuizOutput';
 import type { MultipleChoiceQuestion, TrueFalseQuestion, QuizData } from './types';
 import { generateQuizFromText } from './services/geminiService';
 import { generateUUID } from './utils/uuid';
+import { SparklesIcon } from './components/icons';
+import { sampleQuiz } from './data/sampleQuizData';
 
 const App: React.FC = () => {
     const [inputMode, setInputMode] = useState<'paste' | 'upload'>('paste');
@@ -16,6 +17,11 @@ const App: React.FC = () => {
     const [multipleChoiceQuestions, setMultipleChoiceQuestions] = useState<MultipleChoiceQuestion[]>([]);
     const [trueFalseQuestions, setTrueFalseQuestions] = useState<TrueFalseQuestion[]>([]);
     const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
+    
+    // New state for quiz configuration
+    const [numMultipleChoice, setNumMultipleChoice] = useState<number>(5);
+    const [numTrueFalse, setNumTrueFalse] = useState<number>(5);
+    const [quizFocus, setQuizFocus] = useState<string>('');
 
     const handleGenerateQuiz = useCallback(async () => {
         const textToProcess = inputMode === 'paste' ? pastedText : extractedText;
@@ -30,7 +36,12 @@ const App: React.FC = () => {
         setTrueFalseQuestions([]);
 
         try {
-            const quizData: QuizData = await generateQuizFromText(textToProcess);
+            const quizData: QuizData = await generateQuizFromText(
+                textToProcess,
+                numMultipleChoice,
+                numTrueFalse,
+                quizFocus
+            );
             setMultipleChoiceQuestions(quizData.multipleChoice || []);
             setTrueFalseQuestions(quizData.trueFalse || []);
         } catch (err) {
@@ -39,7 +50,18 @@ const App: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [inputMode, pastedText, extractedText]);
+    }, [inputMode, pastedText, extractedText, numMultipleChoice, numTrueFalse, quizFocus]);
+
+    const handleGenerateSampleQuiz = useCallback(() => {
+        setError(null);
+        setIsLoading(false);
+        setMultipleChoiceQuestions(
+            sampleQuiz.multipleChoice.map(q => ({...q, id: generateUUID()}))
+        );
+        setTrueFalseQuestions(
+            sampleQuiz.trueFalse.map(q => ({...q, id: generateUUID()}))
+        );
+    }, []);
 
     const handleAddQuestion = (type: 'mcq' | 'tf') => {
         if (type === 'mcq') {
@@ -80,10 +102,10 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
+        <div className="min-h-screen font-sans text-gray-200">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
                 <Header />
-                <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
                     <InputSection
                         inputMode={inputMode}
                         setInputMode={setInputMode}
@@ -92,24 +114,38 @@ const App: React.FC = () => {
                         extractedText={extractedText}
                         setExtractedText={setExtractedText}
                         onGenerateQuiz={handleGenerateQuiz}
+                        onGenerateSampleQuiz={handleGenerateSampleQuiz}
                         isLoading={isLoading}
+                        numMultipleChoice={numMultipleChoice}
+                        setNumMultipleChoice={setNumMultipleChoice}
+                        numTrueFalse={numTrueFalse}
+                        setNumTrueFalse={setNumTrueFalse}
+                        quizFocus={quizFocus}
+                        setQuizFocus={setQuizFocus}
                     />
-                    <div className="lg:mt-0">
+                    <div className="lg:mt-0 relative">
                         {isLoading && (
-                            <div className="w-full h-96 flex flex-col items-center justify-center bg-white rounded-xl shadow-md p-6">
-                                <svg className="animate-spin h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <p className="mt-4 text-lg font-medium text-gray-600">AI is generating your questions...</p>
-                                <p className="text-sm text-gray-500">This may take a moment.</p>
+                            <div className="w-full min-h-[30rem] flex flex-col items-center justify-center glass-pane p-6">
+                                <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-pink-500"></div>
+                                <p className="mt-6 text-2xl font-bold text-gray-100 tracking-wider">AI is crafting your quiz...</p>
+                                <p className="text-gray-400">This may take a few moments.</p>
                             </div>
                         )}
                         {error && (
-                             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
-                                <strong className="font-bold">Error: </strong>
+                             <div className="glass-pane border-red-500/50 text-red-300 p-4 rounded-xl shadow-lg" role="alert">
+                                <strong className="font-bold">An Error Occurred: </strong>
                                 <span className="block sm:inline">{error}</span>
                             </div>
+                        )}
+                        
+                        {!isLoading && !error && multipleChoiceQuestions.length === 0 && trueFalseQuestions.length === 0 && (
+                            <div className="w-full min-h-[30rem] flex flex-col items-center justify-center text-center glass-pane p-6">
+                                <SparklesIcon className="h-20 w-20 text-pink-400" />
+                                <h3 className="mt-4 text-3xl font-bold text-white">Quiz Awaits!</h3>
+                                <p className="mt-2 max-w-sm text-gray-400">
+                                    Your generated questions will appear here. Just paste some text or upload a file and let the AI do the magic.
+                                </p>
+                           </div>
                         )}
                         
                         {!isLoading && (multipleChoiceQuestions.length > 0 || trueFalseQuestions.length > 0) && (
