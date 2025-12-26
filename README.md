@@ -45,22 +45,14 @@ flowchart TD
 
 ## Chapters
 
-1. [User Input Management
-](01_user_input_management_.md)
+1. User Input Management
 2. [Quiz Configuration
-](02_quiz_configuration_.md)
-3. [Application Orchestration & State
-](03_application_orchestration___state_.md)
+3. [Application Orchestration & State  
 4. [File Content Extraction
-](04_file_content_extraction_.md)
 5. [AI Quiz Generation Service
-](05_ai_quiz_generation_service_.md)
 6. [Quiz Data Structures
-](06_quiz_data_structures_.md)
 7. [Quiz Output & Editing
-](07_quiz_output___editing_.md)
 8. [Quiz Export
-](08_quiz_export_.md)
 
 ---
 
