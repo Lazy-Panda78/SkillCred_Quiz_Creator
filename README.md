@@ -46,13 +46,13 @@ flowchart TD
 ## Chapters
 
 1. User Input Management
-2. [Quiz Configuration
-3. [Application Orchestration & State  
-4. [File Content Extraction
-5. [AI Quiz Generation Service
-6. [Quiz Data Structures
-7. [Quiz Output & Editing
-8. [Quiz Export
+2. Quiz Configuration
+3. Application Orchestration & State  
+4. File Content Extraction
+5. AI Quiz Generation Service
+6. Quiz Data Structures
+7. Quiz Output & Editing
+8. Quiz Export
 
 ---
 
